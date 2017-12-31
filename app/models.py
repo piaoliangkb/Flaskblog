@@ -1,5 +1,7 @@
 from werkzeug.security import generate_password_hash,check_password_hash
+from flask_login import UserMixin
 from . import db
+
 
 class Role(db.Model):
     __tablename__='roles'
@@ -10,12 +12,13 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role %r>' % self.name
 
-class User(db.Model):
+class User(UserMixin,db.Model):
     __tablename__='users'
     id=db.Column(db.Integer,primary_key=True)
     username=db.Column(db.String(64),unique=True,index=True)
     role_id=db.Column(db.Integer,db.ForeignKey('roles.id'))
     password_hash=db.Column(db.String(128))
+    email=db.Column(db.String(64),unique=True,index=True)
 
     @property
     def password(self):
@@ -31,3 +34,10 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 #一个python类代表一个数据库模型，类中的属性代表数据库表中的列
+
+from . import login_manager
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+#加载用户的回调函数
