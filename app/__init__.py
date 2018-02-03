@@ -10,7 +10,10 @@ moment=Moment()
 db=SQLAlchemy()
 login_manager=LoginManager()
 login_manager.session_protection='strong'
+#该属性可以设置为'strong', 'basic', None
+#strong记录用户端IP地址和浏览器的代理信息，如果发现异常就登出用户
 login_manager.login_view='auth.login'
+#访问login-required要求的视图时，重定向到login_view
 
 def create_app(config_name):
     app=Flask(__name__)
