@@ -15,6 +15,7 @@ login_manager.session_protection='strong'
 login_manager.login_view='auth.login'
 #访问login-required要求的视图时，重定向到login_view
 
+
 def create_app(config_name):
     app=Flask(__name__)
     app.config.from_object(config[config_name])
