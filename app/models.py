@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin,AnonymousUserMixin
 from . import db,login_manager
 from flask import current_app
+from datetime import datetime
 
 class PERMISSION:
     FOLLOW = 1
@@ -71,6 +72,13 @@ class User(UserMixin,db.Model):
     password_hash=db.Column(db.String(128))
     email=db.Column(db.String(64),unique=True,index=True)
 
+    #展示信息
+    name=db.Column(db.String(64))#real name
+    location=db.Column(db.String(64))
+    about_me=db.Column(db.Text())
+    member_since=db.Column(db.DateTime(),default=datetime.utcnow)
+    last_seen=db.Column(db.DateTime(),default=datetime.utcnow)
+
     def __init__(self,**kwargs):
         super(User,self).__init__(**kwargs)
         if self.role is None:
@@ -78,6 +86,10 @@ class User(UserMixin,db.Model):
                 self.role=Role.query.filter_by(permissions=0xff).first()
             if self.role is None:
                 self.role=Role.query.filter_by(default=True).first()
+
+    def ping(self):
+        self.last_seen=datetime.utcnow()
+        db.session.add(self)
 
     def can(self,permissions):
         return self.role is not None and (self.role.permissions & permissions) == permissions

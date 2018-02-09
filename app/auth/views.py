@@ -5,6 +5,21 @@ from ..models import User
 from .forms import LoginForm,ChangePasswordForm,RegistrationForm
 from .. import db
 
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.ping()
+        # if not current_user.confirmed and request.endpoint and request.blueprint != 'auth' \
+        #     and request.endpoint != 'static':
+        #     return redirect(url_for('auth.unconfirmed'))
+
+# @auth.route('/unconfirmed')
+# def unconfirmed():
+#     if current_user.is_anonymous or current_user.confirmed:
+#         return redirect(url_for('main.index'))
+#     return render_template('auth/unconfirmed.html')
+
+
 @auth.route('/login',methods=['GET','POST'])
 def login():
     form=LoginForm()
@@ -24,7 +39,7 @@ def register():
     if form.validate_on_submit():
         user=User(email=form.email.data,
                   username=form.username.data,
-                  password=form.password.data)
+                  password=form.password.data,)
         db.session.add(user)
         db.session.commit()
         flash('You can login now')
@@ -57,3 +72,5 @@ def change_password():
         else:
             flash('Invalid password.')
     return render_template('auth/changepassword.html',form=form)
+
+
