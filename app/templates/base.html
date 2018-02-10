@@ -6,7 +6,7 @@
 {% endblock %}
 <!--在基模板的scripts块中引入moment库-->
 
-{% block title %}Flasky{% endblock %}
+{% block title %}MyBlog{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -39,7 +39,7 @@ type="image/x-icon">
 
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('main.edit_profile') }}">{{ current_user.username }}</a></li>
+                    <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ current_user.username }}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.login') }}">Log In</a> </li>

@@ -1,6 +1,6 @@
-from werkzeug.security import generate_password_hash,check_password_hash
-from flask_login import UserMixin,AnonymousUserMixin
-from . import db,login_manager
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, AnonymousUserMixin
+from . import db, login_manager
 from flask import current_app
 from datetime import datetime
 
@@ -8,16 +8,16 @@ class PERMISSION:
     FOLLOW = 1
     COMMENT = 2
     WRITE = 4
-    MODERATE = 8#FIND THE COMMENTS INAPPROPRIIATE
+    MODERATE = 8#FIND THE COMMENTS INAPPROPRIIATE中等的
     ADMIN = 16
 
 class Role(db.Model):
-    __tablename__='roles'
-    id=db.Column(db.Integer,primary_key=True)
-    name=db.Column(db.String(64),unique=True)
-    default=db.Column(db.Boolean,default=False,index=True)
-    permissions=db.Column(db.Integer)
-    users=db.relationship('User',backref='role',lazy='dynamic')
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(64), unique = True)
+    default = db.Column(db.Boolean, default = False, index = True)
+    permissions = db.Column(db.Integer)
+    users = db.relationship('User', backref = 'role', lazy = 'dynamic')
 
     def __init__(self,**kwargs):
         super(Role,self).__init__(**kwargs)
@@ -25,6 +25,7 @@ class Role(db.Model):
             self.permissions=0
 
     @staticmethod
+    #静态方法不需要实例化，直接使用类名+方法即可直接调用
     def insert_roles():
         roles = {
             'User': [PERMISSION.FOLLOW, PERMISSION.COMMENT],
@@ -78,6 +79,8 @@ class User(UserMixin,db.Model):
     about_me=db.Column(db.Text())
     member_since=db.Column(db.DateTime(),default=datetime.utcnow)
     last_seen=db.Column(db.DateTime(),default=datetime.utcnow)
+    #添加用户头像
+    avatar=db.Column(db.String(128),default=None)
 
     def __init__(self,**kwargs):
         super(User,self).__init__(**kwargs)

@@ -5,13 +5,13 @@ from wtforms import ValidationError
 from ..models import User
 
 class LoginForm(Form):
-    email=StringField('Enail',validators=[DataRequired(),Length(1,64)])
+    email=StringField('Email',validators=[DataRequired(),Length(1,64)])
     password=PasswordField('Password',validators=[DataRequired()])
     remember_me=BooleanField('Keep me logged in')
     submit=SubmitField('Login')
 
 class RegistrationForm(Form):
-    email=StringField('email',validators=[DataRequired(),Length(1,64),Email()])
+    email=StringField('email',validators=[DataRequired(),Length(1,64)])
     username=StringField('Username',validators=[DataRequired(),Length(1,64),Regexp('^[A-Za-z][A-Za-z0-9_.]*$',0,
                                                                                    'Username must have only letters, numbers, dots or underscores')])
     password=PasswordField('Password',validators=[DataRequired(),EqualTo('password2',message='Passwords must match')])
