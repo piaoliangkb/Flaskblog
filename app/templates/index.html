@@ -24,7 +24,7 @@
     <li class="post">
         <div class="post-thumbnail">
             <a href="{{ url_for('.user', username=post.author.username) }}">
-                <img class="img-rounded profile-thumbnail" src="/static/avatar/default_avatar1.jpg">
+                <img class="img-rouded profile-thunbnail" src="{{ post.author.gravatar(size=100) }}" >
             </a>
         </div>
         <div class="post-content">
@@ -40,4 +40,5 @@
     {% endfor %}
     </ul>
 {% endblock %}
+
 

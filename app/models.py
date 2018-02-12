@@ -1,8 +1,9 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
-from flask import current_app
+from flask import current_app, request
 from datetime import datetime
+import hashlib
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -83,6 +84,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     email = db.Column(db.String(64), unique=True, index=True)
     posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
+    avatar_hash = db.Column(db.String(32))
 
     #展示信息
     name = db.Column(db.String(64))#real name
@@ -100,6 +102,17 @@ class User(UserMixin, db.Model):
                 self.role = Role.query.filter_by(permissions=0xff).first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
+        if self.email is not None and self.avatar_hash is None:
+            self.avatar_hash = self.gravatar_hash()
+
+    def gravatar_hash(self):
+        return hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
+
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        url = 'https://secure.gravatar.com/avatar'
+        hash = self.avatar_hash or self.gravatar_hash()
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+            url=url, hash=hash, size=size, default=default, rating=rating)
 
     def ping(self):
         self.last_seen = datetime.utcnow()
