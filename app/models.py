@@ -90,7 +90,7 @@ class Role(db.Model):
             'Adminstrator': [PERMISSION.FOLLOW, PERMISSION.COMMENT, PERMISSION.WRITE, PERMISSION.MODERATE,
                              PERMISSION.ADMIN],
         }
-        default_role='Adminstrator'
+        default_role='User'
         for r in roles:
             role=Role.query.filter_by(name=r).first()
             #查找Role表种是否有对应的用户类型
