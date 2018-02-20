@@ -7,6 +7,25 @@ import hashlib
 from markdown import markdown
 import bleach
 
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', b'', 'code', 'em', 'i', 'strong']
+        target.body_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'), tags=allowed_tags, strip=True)
+        )
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)
+
 class Post(db.Model):
     __tablename__ = 'posts'
 
@@ -15,6 +34,7 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     body_html = db.Column(db.Text)#保存转换后markdown文章的html代码
+    comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
@@ -56,7 +76,6 @@ class Role(db.Model):
     default = db.Column(db.Boolean, default = False, index = True)
     permissions = db.Column(db.Integer)
     users = db.relationship('User', backref = 'role', lazy = 'dynamic')
-
     def __init__(self,**kwargs):
         super(Role,self).__init__(**kwargs)
         if self.permissions is None:
@@ -121,6 +140,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     #添加用户头像
     avatar = db.Column(db.String(128), default=None)
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
     def __init__(self,**kwargs):
         super(User,self).__init__(**kwargs)
