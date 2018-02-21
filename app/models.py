@@ -30,6 +30,7 @@ class Post(db.Model):
     __tablename__ = 'posts'
 
     id = db.Column(db.Integer, primary_key=True)
+    title  = db.Column(db.String, default='this blog')
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -59,6 +60,7 @@ class Post(db.Model):
                      author=u)
         db.session.add(p)
         db.session.commit()
+
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 class PERMISSION:

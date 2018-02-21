@@ -4,9 +4,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
-    FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
+    FLASKY_ADMIN = 'admin'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FLASKY_COMMENTS_PER_PAGE = 5
+    FLASKY_POSTS_PER_AGE = 2
 
     @staticmethod
     def init_app(app):
@@ -17,7 +18,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
-    FLASKY_POSTS_PER_AGE = 20
+
 
 
 # class TestingConfig(Config):

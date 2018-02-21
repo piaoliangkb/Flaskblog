@@ -12,11 +12,14 @@ manager.add_command('db', MigrateCommand)
 def make_shell_context():
     return dict(app=app, db=db, User=User, Role=Role, Comment=Comment)
 
-@manager.command()
-def deploy():
-    from flask_migrate import upgrade, migrate
-    from app.models import Role
+if __name__ == '__main__':
+    manager.run()
 
-    migrate()
-    upgrade()
-    Role.insert_roles()
+# @manager.command()
+# def deploy():
+#     from flask_migrate import upgrade, migrate
+#     from app.models import Role
+#
+#     migrate()
+#     upgrade()
+#     Role.insert_roles()

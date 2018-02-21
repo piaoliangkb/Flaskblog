@@ -41,6 +41,7 @@ class EditProfileAdminForm(FlaskForm):
             raise ValidationError('Username already in use.')
 
 class PostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
     body=PageDownField('Write something here',validators=[DataRequired()])
     submit=SubmitField('Submit')
 

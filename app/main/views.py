@@ -10,7 +10,7 @@ from ..models import db,Role
 def index():
     form = PostForm()
     if current_user.can(PERMISSION.WRITE) and form.validate_on_submit():
-        post = Post(body=form.body.data, author=current_user._get_current_object())
+        post = Post(title=form.title.data, body=form.body.data, author=current_user._get_current_object())
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('.index'))
@@ -119,3 +119,24 @@ def edit(id):
         return redirect(url_for('.post', id=post.id))
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
+
+@main.route('/delete_posts/<int:id>')
+@login_required
+def delete_post(id):
+    if current_user.can(PERMISSION.ADMIN):
+        authorid = Post.query.filter_by(id=id).first().author_id
+        user = User.query.filter_by(id=authorid).first()
+        post = Post.query.filter_by(id=id).first()
+        db.session.delete(post)
+        db.session.commit()
+        return request.args.get('next') or redirect(url_for('.user', username=user.username))
+
+# @main.route('post/<int:id>/delete')
+# @login_required
+# def delete_post(id):
+#     form = PostForm
+#     post = Post.query.get_or_404(id)
+#     if current_user.can(PERMISSION.ADMIN):
+#         db.session.delete(post)
+#         db.session.commit()
+#         flash('This post has been deleted.')
