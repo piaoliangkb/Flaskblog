@@ -15,11 +15,3 @@ def make_shell_context():
 if __name__ == '__main__':
     manager.run()
 
-# @manager.command()
-# def deploy():
-#     from flask_migrate import upgrade, migrate
-#     from app.models import Role
-#
-#     migrate()
-#     upgrade()
-#     Role.insert_roles()
