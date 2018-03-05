@@ -22,7 +22,7 @@ def before_request():
 
 @auth.route('/login',methods=['GET','POST'])
 def login():
-    form=LoginForm()
+    form = LoginForm()
     if form.validate_on_submit():
         user=User.query.filter_by(email=form.email.data).first()
         #filter_by=where
