@@ -20,24 +20,24 @@
 </div>
 <div>
     {% if current_user.can(4) %}
-{#    {{ wtf.quick_form(form) }}#}
-        <div class="form-group required">
-        {{ form.title(id="title", class="form-control", placeholder=form.title.label.text) }}
-        </div>
-         <div class="form-group">
-             <div class="row">
-                 <div class="col-md-6">
-                     {{ form.body(only_input=True, class="input-markdown", placeholder=form.body.label.text) }}
-                 </div>
-                 <div class="col-md-6">
-                    {{ form.body(only_preview=True) }}
-                 </div>
-             </div>
-        </div>
-        <div class="form-group">
-             {{ form.submit(class="btn btn-default") }}
-         </div>
-        <div>
+    {{ wtf.quick_form(form) }}
+{#        <div class="form-group required">#}
+{#        {{ form.title(id="title", class="form-control", placeholder=form.title.label.text) }}#}
+{#        </div>#}
+{#         <div class="form-group">#}
+{#             <div class="row">#}
+{#                 <div class="col-md-6">#}
+{#                     {{ form.body(only_input=True, class="input-markdown", placeholder=form.body.label.text) }}#}
+{#                 </div>#}
+{#                 <div class="col-md-6">#}
+{#                    {{ form.body(only_preview=True) }}#}
+{#                 </div>#}
+{#             </div>#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#             {{ form.submit(class="btn btn-default") }}#}
+{#         </div>#}
+{#        <div>#}
 {#        <form method="post" action="">#}
 {#        {{ form.csrf_token }}#}
 {#        {{ form.title(id="title", class="form-control", placeholder=form.title.label.text) }}#}
