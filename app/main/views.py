@@ -130,6 +130,7 @@ def delete_post(id):
         post = Post.query.filter_by(id=id).first()
         db.session.delete(post)
         db.session.commit()
+        flash("You have deleted this article.")
         return request.args.get('next') or redirect(url_for('.user', username=user.username))
 
 # @main.route('post/<int:id>/delete')

@@ -42,8 +42,8 @@ class EditProfileAdminForm(FlaskForm):
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    body=PageDownField('Write something here',validators=[DataRequired()])
-    submit=SubmitField('Submit')
+    body = PageDownField('Write something here',validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 class CommentForm(FlaskForm):
     body = StringField('', validators=[DataRequired()])
