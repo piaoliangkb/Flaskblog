@@ -38,7 +38,7 @@
         </p>
     </div>
 </div>
-
+    {% if current_user.is_administrator() %}
     <h3>Posts by {{ user.username }}</h3>
     <ul class="posts">
     {% for post in posts %}
@@ -64,6 +64,7 @@
         </div>
     </li>
     {% endfor %}
+    {% endif %}
 </ul>
 {% endblock %}
 
