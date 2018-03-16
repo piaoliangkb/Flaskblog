@@ -1,4 +1,4 @@
-#### 项目demo地址：piaoliangkb.info
+#### 项目demo地址：[piaoliangkb.info](http://piaoliangkb.info/)
 -----------------------------------------
 
 对照《Flask Web开发：基于Python的Web应用开发实战》编写的个人博客demo。   
