@@ -7,11 +7,11 @@
 - 个人信息修改
 - 博客信息发布
 - 博客评论 
+- 文章列表页
 
 将要添加和完善的功能包括：
 - 博客界面美化
 - 寻找功能完善美观的markdown或富文本编辑器
-- 博客文章列表页
 - 文章标签
 - 爬虫添加
 
@@ -86,6 +86,15 @@ WSGI就是这样的一个协议：它是一个Python程序和用户请求之间�
 其中start代表start.py模块，app代表flask的app。127.0.0.1：8000端口地址需要与nginx配置文件中相同。
 
 至此配置完成。
+
+##### 5.3 项目更改后的重新部署
+需要重启gunicorn：首先找到gunicorn的进程号
+
+    pstree -ap|grep gunicorn
+![](https://upload-images.jianshu.io/upload_images/11146099-756a4db50ef6999f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+根据找到的主进程号，重启gunicorn：
+
+    kill -HUP *****
     
 
     
