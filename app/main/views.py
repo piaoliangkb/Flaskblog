@@ -3,7 +3,7 @@ from . import main
 from ..decorators import admin_required,permission_required
 from ..models import PERMISSION, User, Post, AnonymousUser, AnonymousUserMixin, Comment
 from flask_login import login_required,current_user
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm,CommentForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm, EditPostForm
 from ..models import db,Role
 
 @main.route('/', methods=['GET','POST'])
@@ -63,25 +63,27 @@ def edit_profile():
 @login_required
 @admin_required
 def edit_profile_admin(id):
-    user=User.query.get_or_404(id)
-    form=EditProfileAdminForm(user=user)
+    user = User.query.get_or_404(id)
+    form = EditProfileAdminForm(user=user)
     if form.validate_on_submit():
-        user.email=form.email.data
-        user.username=form.username.data
-        user.role=Role.query.get(form.role.data)
-        user.name=form.name.data
-        user.location=form.location.data
-        user.about_me=form.about_me.data
+        user.email = form.email.data
+        user.username = form.username.data
+        user.role = Role.query.get(form.role.data)
+        user.name = form.name.data
+        user.location = form.location.data
+        user.about_me = form.about_me.data
+        user.member_since = form.registertime.data
         db.session.add(user)
         db.session.commit()
         flash('Admin profile has been updated.')
         return redirect(url_for('.user',username=user.username))
-    form.email.data=user.username
-    form.username.data=user.username
-    form.role.data=user.role_id
-    form.name.data=user.name
-    form.location.data=user.location
-    form.about_me.data=user.about_me
+    form.email.data = user.username
+    form.username.data = user.username
+    form.role.data = user.role_id
+    form.name.data = user.name
+    form.location.data = user.location
+    form.about_me.data = user.about_me
+    form.registertime.data = user.member_since
     return render_template('edit_profile.html',form=form,user=user)
 
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
@@ -110,15 +112,17 @@ def edit(id):
     post = Post.query.get_or_404(id)
     if current_user != post.author and not current_user.can(PERMISSION.ADMIN):
         abort(403)
-    form=PostForm()
+    form=EditPostForm()
     if form.validate_on_submit():
         post.body = form.body.data
+        post.timestamp = form.time.data
         db.session.add(post)
         db.session.commit()
         flash('This post has been updated.')
         return redirect(url_for('.post', id=post.id))
     form.title.data = post.title
     form.body.data = post.body
+    form.time.data = post.timestamp
     return render_template('edit_post.html', form=form)
 
 @main.route('/delete_posts/<int:id>')

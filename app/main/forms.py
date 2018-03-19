@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, BooleanField, SelectField, FileField
+from wtforms import StringField, SubmitField, TextAreaField, BooleanField, SelectField, FileField, DateTimeField
 from wtforms.validators import DataRequired, Length, Email, Regexp
 from ..models import Role, User
 from wtforms import ValidationError
@@ -25,6 +25,7 @@ class EditProfileAdminForm(FlaskForm):
     name = StringField('Real name', validators=[Length(0, 64)])
     location = StringField('Location', validators=[Length(0, 64)])
     about_me = TextAreaField('About_me')
+    registertime = DateTimeField('Register time changed', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
     def __init__(self, user, *args, **kwargs):
@@ -43,6 +44,12 @@ class EditProfileAdminForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     body = PageDownField('Write something here',validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class EditPostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    body = PageDownField('Write something here', validators=[DataRequired()])
+    time = DateTimeField('Date change', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class CommentForm(FlaskForm):
