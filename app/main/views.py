@@ -133,6 +133,16 @@ def delete_post(id):
         flash("You have deleted this article.")
         return request.args.get('next') or redirect(url_for('.user', username=user.username))
 
+@main.route('/post')
+def post_list():
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['POSTLISTS_FOR_POSTS_PER_PAGE'],
+        error_out=False
+    )
+    posts = pagination.items
+    return render_template('posts_list.html', posts=posts, pagination=pagination, endpoint='.post_list')
+
 # @main.route('post/<int:id>/delete')
 # @login_required
 # def delete_post(id):

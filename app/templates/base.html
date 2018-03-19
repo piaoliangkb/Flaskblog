@@ -27,7 +27,7 @@ type="image/x-icon">
             </button>
             <a class="navbar-brand" href="/">Blog</a>
         </div>
-        <div class="navbar-collapse collapse">
+        <li class="navbar-collapse collapse">
 
             <ul class="nav navbar-nav">
                 <li><a href="/">Home</a></li>
@@ -35,11 +35,12 @@ type="image/x-icon">
                 <li><a href="{{ url_for('main.user', username=current_user.username) }}">
                     Profile</a></li>
                 {% endif %}
+                <li><a href="{{url_for('main.post_list')}}">Posts</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ current_user.username }}</a></li>
+                    <li><a href="{{ url_for('main.user', username=current_user.username) }}"><img class="img-circle" src="{{ current_user.gravatar(size=20)}}">{{ current_user.username }}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.login') }}">Log In</a> </li>

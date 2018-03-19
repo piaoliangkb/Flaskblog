@@ -7,7 +7,8 @@ class Config:
     FLASKY_ADMIN = 'admin'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FLASKY_COMMENTS_PER_PAGE = 5
-    FLASKY_POSTS_PER_AGE = 2
+    FLASKY_POSTS_PER_AGE = 1
+    POSTLISTS_FOR_POSTS_PER_PAGE = 10
 
     @staticmethod
     def init_app(app):
