@@ -20,7 +20,7 @@ class Comment(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', b'', 'code', 'em', 'i', 'strong']
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i', 'strong']
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'), tags=allowed_tags, strip=True)
         )
@@ -94,15 +94,15 @@ class Role(db.Model):
         }
         default_role='User'
         for r in roles:
-            role=Role.query.filter_by(name=r).first()
+            role = Role.query.filter_by(name=r).first()
             #查找Role表种是否有对应的用户类型
             if role is None:
-                role=Role(name=r)
+                role = Role(name=r)
             #如果Role表种没有对应的用户类型，则将新的用户类型加入到Role表中
             role.reset_permissions()
             for perm in roles[r]:
                 role.add_permission(perm)
-            role.default= (role.name==default_role)
+            role.default = (role.name==default_role)
             db.session.add(role)
         db.session.commit()
 

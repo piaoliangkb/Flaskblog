@@ -17,10 +17,8 @@ def index():
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_AGE'],
-        error_out=False
-    )
+        error_out=False)
     posts = pagination.items
-    #posts = Post.query.order_by(Post.timestamp.desc()).all()
     return render_template('index.html', form=form, posts=posts, pagination=pagination)
 
 
@@ -37,6 +35,7 @@ def for_moderators_only():
     return 'For comment moderators!'
 
 @main.route('/user/<username>')
+@login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.timestamp.desc()).all()
@@ -57,9 +56,10 @@ def edit_profile():
     form.name.data=current_user.name
     form.location.data=current_user.location
     form.about_me.data=current_user.about_me
-    return render_template('edit_profile.html',form=form)
+    return render_template('edit_profile.html', form=form)
 
-@main.route('/edit-profile/<int:id>',methods=['GET','POST'])
+
+@main.route('/edit-profile/<int:id>', methods=['GET','POST'])
 @login_required
 @admin_required
 def edit_profile_admin(id):
@@ -76,15 +76,16 @@ def edit_profile_admin(id):
         db.session.add(user)
         db.session.commit()
         flash('Admin profile has been updated.')
-        return redirect(url_for('.user',username=user.username))
-    form.email.data = user.username
+        return redirect(url_for('.user', username=user.username))
+    form.email.data = user.email
     form.username.data = user.username
     form.role.data = user.role_id
     form.name.data = user.name
     form.location.data = user.location
     form.about_me.data = user.about_me
     form.registertime.data = user.member_since
-    return render_template('edit_profile.html',form=form,user=user)
+    return render_template('edit_profile.html', form=form, user=user)
+
 
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
@@ -106,13 +107,14 @@ def post(id):
     return render_template('post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
 
+
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit(id):
     post = Post.query.get_or_404(id)
     if current_user != post.author and not current_user.can(PERMISSION.ADMIN):
         abort(403)
-    form=EditPostForm()
+    form = EditPostForm()
     if form.validate_on_submit():
         post.body = form.body.data
         post.timestamp = form.time.data
@@ -124,6 +126,7 @@ def edit(id):
     form.body.data = post.body
     form.time.data = post.timestamp
     return render_template('edit_post.html', form=form)
+
 
 @main.route('/delete_posts/<int:id>')
 @login_required
@@ -137,6 +140,7 @@ def delete_post(id):
         flash("You have deleted this article.")
         return request.args.get('next') or redirect(url_for('.user', username=user.username))
 
+
 @main.route('/post')
 def post_list():
     page = request.args.get('page', 1, type=int)
@@ -146,13 +150,3 @@ def post_list():
     )
     posts = pagination.items
     return render_template('posts_list.html', posts=posts, pagination=pagination, endpoint='.post_list')
-
-# @main.route('post/<int:id>/delete')
-# @login_required
-# def delete_post(id):
-#     form = PostForm
-#     post = Post.query.get_or_404(id)
-#     if current_user.can(PERMISSION.ADMIN):
-#         db.session.delete(post)
-#         db.session.commit()
-#         flash('This post has been deleted.')
