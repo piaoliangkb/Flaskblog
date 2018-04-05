@@ -1,48 +1,4 @@
-{#<ul class="posts">#}
-{#    {% for post in posts %}#}
-{#    <li class="post">#}
-{#        <div class="post-title">#}
-{#            <h3>Title: <a href="{{ url_for('.post', id=post.id) }}">{{ post.title }} </a></h3>#}
-{#        </div>#}
-{#        <div class="post-content">#}
-{#            <div class="post-date"><h4>Post time: {{ moment(post.timestamp).fromNow() }}</h4></div>#}
-{#            <div class="post-author"><h4>Writer: <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a></h4></div>#}
-{#            <div class="post-body"><h3>Content:</h3>#}
-{#                {% if post.body_html %}#}
-{#                {{ post.body_html | safe }}#}
-{#                {% else %}#}
-{#                {{ post.body }}#}
-{#                {% endif %}#}
-{#            </div>#}
-{#            <div class="post-footer">#}
-{#                <a href="{{ url_for('.post', id=post.id)}}">#}
-{#                    <span class="label label-default">Permalink</span>#}
-{#                    {% if current_user == post.author %}#}
-{#                    <a href="{{ url_for('.edit', id=post.id) }}">#}
-{#                        <span class="label label-primary">Edit</span>#}
-{#                    </a>#}
-{#                    {% elif current_user.is_administrator() %}#}
-{#                    <a href="{{ url_for('.edit', id=post.id) }}">#}
-{#                        <span class="label label-danger">Edit [Admin]</span>#}
-{#                    </a>#}
-{#                    {% endif %}#}
-{#                    {% if current_user.is_administrator() %}#}
-{#                    <a href="{{ url_for('.delete_post', id=post.id) }}">#}
-{#                        <span class="label label-danger">Delete</span>#}
-{#                    </a>#}
-{#                    {% endif %}#}
-{#                    <a href="{{ url_for('.post', id=post.id) }}#comments">#}
-{#                    <span class="label label-primary">{{ post.comments.count() }} Comments</span>#}
-{#                    </a>#}
-{#                </a>#}
-{#            </div><br>#}
-{#        </div>#}
-{#    </li>#}
-{#    {% endfor %}#}
-{#</ul>#}
-
-
-<ul class="posts">
+<div class="posts" class="left">
     {% for post in posts %}
     <div class="post">
         <div class="panel panel-info">
@@ -89,5 +45,5 @@
     </div><br>
     </div>
     {% endfor %}
-</ul>
+</div>
 

@@ -25,7 +25,9 @@
     {% endif %}
 </div>
 <h3>Post Last Update</h3>
-{% include '_posts.html' %}
+<div class="left">
+    {% include '_posts.html' %}
+</div>
     {% if pagination %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.index') }}
