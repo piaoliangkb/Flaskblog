@@ -9,7 +9,7 @@ class Config:
     FLASKY_COMMENTS_PER_PAGE = 5
     FLASKY_POSTS_PER_AGE = 1
     POSTLISTS_FOR_POSTS_PER_PAGE = 10
-    BOOLEANSEARCH_PATH = os.path.join(basedir, 'app\static\documents\BooleanSearch')
+    BOOLEANSEARCH_PATH = os.path.join(basedir, 'app/static/documents/BooleanSearch')
 
     @staticmethod
     def init_app(app):

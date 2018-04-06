@@ -7,6 +7,7 @@ from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm,
 from ..models import db,Role
 import os
 from config import Config
+from ..extends.boolsearch import BoolSearch
 
 @main.route('/', methods=['GET','POST'])
 def index():
@@ -163,7 +164,7 @@ def webmining():
     basedir = Config.BOOLEANSEARCH_PATH
     allfilename = []
     #文章路径list
-    with open(basedir + "\documentindex.txt") as file:
+    with open(basedir + "/documentindex.txt") as file:
         for content in file.readlines():
             filepath = content.split('\t')[1].replace('\n', '')
             allfilename.append(filepath)
@@ -174,5 +175,57 @@ def webmining():
             filename = os.path.split(path)[1]
             #分割路径和文件名
             content[filename] = file.read()
+    data = request.args.get('query', None)
+    queryresult = {}
+    isfound = True
+    occurset, isfound = BoolSearch.SearchSingleKeyword(data, isfound)
+    if occurset:
+        queryresult = BoolSearch.GenerateResultDict(occurset)
+    return render_template('webmining.html', content=content, result=queryresult, isfound=isfound)
 
-    return render_template('webmining.html', content=content)
+
+@main.route('/boolsearch', methods = ['POST', 'GET'])
+def boolsearch():
+    from ..extends.invert import InvertedFile
+    InvertedFile.BuildDocumentIndex()
+    InvertedFile.BuildWordIndex()
+    #建立文章索引和单词索引
+    basedir = Config.BOOLEANSEARCH_PATH
+    allfilename = []
+    #文章路径list
+    with open(basedir + "/documentindex.txt") as file:
+        for content in file.readlines():
+            filepath = content.split('\t')[1].replace('\n', '')
+            allfilename.append(filepath)
+    content = {}
+    #文章内容list
+    for path in allfilename:
+        with open(path) as file:
+            filename = os.path.split(path)[1]
+            #分割路径和文件名
+            content[filename] = file.read()
+    query = request.args.get('query', None)
+    if query:
+        words = query.split()
+        for item in words:
+            print(item)
+    # isfound = True
+    # if data is not None:
+    #     with open(basedir + "\wordindex.txt") as file:
+    #         for line in file.readlines():
+    #             if data == line.split('\t')[0]:
+    #                 occurset = set(line.split('\t')[1].split())
+    #     if not occurset:
+    #         isfound = False
+    #     else:
+    #         with open(basedir + "\documentindex.txt") as file:
+    #             for line in file.readlines():
+    #                 for i in occurset:
+    #                     if i == line.split('\t')[0]:
+    #                         resultpath = line.split('\t')[1].replace('\n', '')
+    #                         with open(resultpath) as file:
+    #                             filename = os.path.split(resultpath)[1]
+    #                             queryresult[filename] = file.read()
+    #                         occurset.remove(i)
+    #                         break
+    return render_template('boolsearch.html', content=content)

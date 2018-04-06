@@ -15,6 +15,10 @@
     </div>
 </form>
 
+    {% for item in data %}
+    <h1> {{ item }}</h1>
+    {% endfor %}
+
 <h1>SearchResult</h1>
 {% if not isfound %}
 <div class="searchresult">
@@ -23,20 +27,20 @@
     Sorry, not found anything.
     </div>
 </div>
-{% else %}
-{% for filename, content in result.items() %}
-<div class="searchresult">
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="panel-title">
-            {{ filename }}
-        </div>
-    </div>
-    <div class="panel-body">
-    {{ content }}
-    </div>
-</div>
-{% endfor %}
+{#{% else %}#}
+{#{% for filename, content in result.items() %}#}
+{#<div class="searchresult">#}
+{#<div class="panel panel-default">#}
+{#    <div class="panel-heading">#}
+{#        <div class="panel-title">#}
+{#            {{ filename }}#}
+{#        </div>#}
+{#    </div>#}
+{#    <div class="panel-body">#}
+{#    {{ content }}#}
+{#    </div>#}
+{#</div>#}
+{#{% endfor %}#}
 {% endif %}
 
 <div class="filecontent">
