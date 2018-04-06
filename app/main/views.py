@@ -5,6 +5,8 @@ from ..models import PERMISSION, User, Post, AnonymousUser, AnonymousUserMixin, 
 from flask_login import login_required,current_user
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm, EditPostForm
 from ..models import db,Role
+import os
+from config import Config
 
 @main.route('/', methods=['GET','POST'])
 def index():
@@ -150,3 +152,27 @@ def post_list():
     )
     posts = pagination.items
     return render_template('posts_list.html', posts=posts, pagination=pagination, endpoint='.post_list')
+
+
+@main.route('/webmining', methods = ['POST', 'GET'])
+def webmining():
+    from ..extends.invert import InvertedFile
+    InvertedFile.BuildDocumentIndex()
+    InvertedFile.BuildWordIndex()
+    #建立文章索引和单词索引
+    basedir = Config.BOOLEANSEARCH_PATH
+    allfilename = []
+    #文章路径list
+    with open(basedir + "\documentindex.txt") as file:
+        for content in file.readlines():
+            filepath = content.split('\t')[1].replace('\n', '')
+            allfilename.append(filepath)
+    content = {}
+    #文章内容list
+    for path in allfilename:
+        with open(path) as file:
+            filename = os.path.split(path)[1]
+            #分割路径和文件名
+            content[filename] = file.read()
+
+    return render_template('webmining.html', content=content)

@@ -1,0 +1,6 @@
+1	D:\documents\Python\flask\flaskfitsttime\app\static\documents\BooleanSearch\math1.txt
+2	D:\documents\Python\flask\flaskfitsttime\app\static\documents\BooleanSearch\math2.txt
+3	D:\documents\Python\flask\flaskfitsttime\app\static\documents\BooleanSearch\math3.txt
+4	D:\documents\Python\flask\flaskfitsttime\app\static\documents\BooleanSearch\sports1.txt
+5	D:\documents\Python\flask\flaskfitsttime\app\static\documents\BooleanSearch\sports2.txt
+6	D:\documents\Python\flask\flaskfitsttime\app\static\documents\BooleanSearch\sports3.txt

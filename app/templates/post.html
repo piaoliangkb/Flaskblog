@@ -13,7 +13,9 @@
     {{ wtf.quick_form(form) }}
 </div>
 {% endif %}
-{% include '_comments.html' %}
+<div class="conments">
+    {% include '_comments.html' %}
+</div>
 {% if pagination %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}

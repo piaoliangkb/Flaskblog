@@ -37,6 +37,9 @@ class Post(db.Model):
     body_html = db.Column(db.Text)#保存转换后markdown文章的html代码
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
+    def __repr__(self):
+        return '<Title:{}, Posttime:{}>'.format(self.title, self.timestamp)
+
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',

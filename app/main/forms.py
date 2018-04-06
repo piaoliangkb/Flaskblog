@@ -48,8 +48,8 @@ class PostForm(FlaskForm):
 
 class EditPostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    body = PageDownField('Write something here', validators=[DataRequired()])
     time = DateTimeField('Date change', validators=[DataRequired()])
+    body = PageDownField('Write something here', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class CommentForm(FlaskForm):
