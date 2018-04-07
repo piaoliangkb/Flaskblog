@@ -56,6 +56,7 @@ def boolsearch():
     query = request.args.get('query', None)
     queryresult = {}
     isfound = True
+    words = []
     if query:
         words = query.split()
         if len(words) == 1:
@@ -91,7 +92,7 @@ def boolsearch():
                         resultlist[i] = resultlist[i] & resultlist[i - 2]
                     elif resultlist[i - 1] == "OR":
                         resultlist[i] = resultlist[i] | resultlist[i - 2]
-            for item in resultlist:
-                print(item)
             queryresult = BoolSearch.GenerateResultDict(resultlist[-1])
-    return render_template('boolsearch.html', content=content, result=queryresult, isfound=isfound)
+            if not queryresult:
+                isfound = False
+    return render_template('boolsearch.html', content=content, result=queryresult, isfound=isfound, queryword=words)

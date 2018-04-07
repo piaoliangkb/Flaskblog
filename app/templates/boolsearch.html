@@ -19,7 +19,14 @@
         <h1> {{ item }}</h1>
     {% endfor %}
 
-    <h1>SearchResult</h1>
+    {% if not queryword %}
+        <h1>SearchResult</h1>
+    {% else %}
+        <h1>SearchResultFor:
+            <h3>{% for item in queryword %}{{ item }} {% endfor %}</h3>
+        </h1>
+    {% endif %}
+
     {% if not isfound %}
         <div class="searchresult">
         <div class="panel panel-warning">
