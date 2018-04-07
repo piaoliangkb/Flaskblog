@@ -1,10 +1,12 @@
 from config import Config
 import os
+
 basedir = Config.BOOLEANSEARCH_PATH
+
 
 class BoolSearch():
     @staticmethod
-    def SearchSingleKeyword(data, isfound):
+    def SearchSingleKeyword(data, isfound=True):
         occurset = set()
         if data is not None:
             with open(basedir + "/wordindex.txt") as file:

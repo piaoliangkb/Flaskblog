@@ -48,25 +48,25 @@ def user(username):
     return render_template('user.html', user=user, posts=posts)
 
 
-@main.route('/edit-profile',methods=['GET','POST'])
+@main.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form=EditProfileForm()
+    form = EditProfileForm()
     if form.validate_on_submit():
-        current_user.name=form.name.data
-        current_user.location=form.location.data
-        current_user.about_me=form.about_me.data
+        current_user.name = form.name.data
+        current_user.location = form.location.data
+        current_user.about_me = form.about_me.data
         db.session.add(current_user)
         db.session.commit()
         flash('Your profile has been updated.')
         return redirect(url_for('.user', username=current_user.username))
-    form.name.data=current_user.name
-    form.location.data=current_user.location
-    form.about_me.data=current_user.about_me
+    form.name.data = current_user.name
+    form.location.data = current_user.location
+    form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', form=form)
 
 
-@main.route('/edit-profile/<int:id>', methods=['GET','POST'])
+@main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def edit_profile_admin(id):
@@ -106,7 +106,7 @@ def post(id):
         return redirect(url_for('.post', id=post.id, page=-1))
     page = request.args.get('page', 1, type=int)
     if page == -1:
-        page = (post.comments.count() - 1) // current_app.config['FLASKY_COMMENTS_PER_PAGE']+1
+        page = (post.comments.count() - 1) // current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
     pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
         page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
         error_out=False)
@@ -157,78 +157,3 @@ def post_list():
     )
     posts = pagination.items
     return render_template('posts_list.html', posts=posts, pagination=pagination, endpoint='.post_list')
-
-
-@main.route('/webmining', methods = ['POST', 'GET'])
-def webmining():
-    from ..extends.invert import InvertedFile
-    InvertedFile.BuildDocumentIndex()
-    InvertedFile.BuildWordIndex()
-    #建立文章索引和单词索引
-    basedir = Config.BOOLEANSEARCH_PATH
-    allfilename = []
-    #文章路径list
-    with open(basedir + "/documentindex.txt") as file:
-        for content in file.readlines():
-            filepath = content.split('\t')[1].replace('\n', '')
-            allfilename.append(filepath)
-    content = {}
-    #文章内容list
-    for path in allfilename:
-        with open(path) as file:
-            filename = os.path.split(path)[1]
-            #分割路径和文件名
-            content[filename] = file.read()
-    data = request.args.get('query', None)
-    queryresult = {}
-    isfound = True
-    occurset, isfound = BoolSearch.SearchSingleKeyword(data, isfound)
-    if occurset:
-        queryresult = BoolSearch.GenerateResultDict(occurset)
-    return render_template('webmining.html', content=content, result=queryresult, isfound=isfound)
-
-
-@main.route('/boolsearch', methods = ['POST', 'GET'])
-def boolsearch():
-    InvertedFile.BuildDocumentIndex()
-    InvertedFile.BuildWordIndex()
-    #建立文章索引和单词索引
-    basedir = Config.BOOLEANSEARCH_PATH
-    allfilename = []
-    #文章路径list
-    with open(basedir + "/documentindex.txt") as file:
-        for content in file.readlines():
-            filepath = content.split('\t')[1].replace('\n', '')
-            allfilename.append(filepath)
-    content = {}
-    #文章内容list
-    for path in allfilename:
-        with open(path) as file:
-            filename = os.path.split(path)[1]
-            #分割路径和文件名
-            content[filename] = file.read()
-    query = request.args.get('query', None)
-    if query:
-        words = query.split()
-        for item in words:
-            print(item)
-    # isfound = True
-    # if data is not None:
-    #     with open(basedir + "\wordindex.txt") as file:
-    #         for line in file.readlines():
-    #             if data == line.split('\t')[0]:
-    #                 occurset = set(line.split('\t')[1].split())
-    #     if not occurset:
-    #         isfound = False
-    #     else:
-    #         with open(basedir + "\documentindex.txt") as file:
-    #             for line in file.readlines():
-    #                 for i in occurset:
-    #                     if i == line.split('\t')[0]:
-    #                         resultpath = line.split('\t')[1].replace('\n', '')
-    #                         with open(resultpath) as file:
-    #                             filename = os.path.split(resultpath)[1]
-    #                             queryresult[filename] = file.read()
-    #                         occurset.remove(i)
-    #                         break
-    return render_template('boolsearch.html', content=content)

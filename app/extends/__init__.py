@@ -1,6 +1,5 @@
 from flask import Blueprint
 
-
-auth = Blueprint('auth', __name__)
+extends = Blueprint('extends', __name__)
 
 from . import views
