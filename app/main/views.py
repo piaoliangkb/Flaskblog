@@ -5,10 +5,6 @@ from ..models import PERMISSION, User, Post, AnonymousUser, AnonymousUserMixin, 
 from flask_login import login_required, current_user
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm, EditPostForm
 from ..models import db, Role
-import os
-from config import Config
-from ..extends.boolsearch import BoolSearch
-from ..extends.invert import InvertedFile
 
 
 @main.route('/', methods=['GET', 'POST'])
