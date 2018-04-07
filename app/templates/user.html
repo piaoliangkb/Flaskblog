@@ -2,12 +2,7 @@
 
 {% block page_content %}
 <div class="page-header">
-{#    {% if user.avatar %}#}
-{#    <img class="img-rounded profile=tunmbnail" src="{{ user.avatar }}">#}
-{#    {% else %}#}
-{#    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}" >#}
-{#    {% endif %}#}
-<img class="img-rounded profile=tunmbnail" src="/static/avatar/large.png">
+<img class="img-rounded profile=tunmbnail" src="{{ user.gravatar(size=200)}}">
     <div class="profile-header">
         <h1>{{ user.username }}</h1>
         {% if user.name or user.location %}

@@ -1,15 +1,17 @@
 from flask import render_template, flash, redirect, url_for, request, current_app, abort
 from . import main
-from ..decorators import admin_required,permission_required
+from ..decorators import admin_required, permission_required
 from ..models import PERMISSION, User, Post, AnonymousUser, AnonymousUserMixin, Comment
-from flask_login import login_required,current_user
+from flask_login import login_required, current_user
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm, EditPostForm
-from ..models import db,Role
+from ..models import db, Role
 import os
 from config import Config
 from ..extends.boolsearch import BoolSearch
+from ..extends.invert import InvertedFile
 
-@main.route('/', methods=['GET','POST'])
+
+@main.route('/', methods=['GET', 'POST'])
 def index():
     form = PostForm()
     if current_user.can(PERMISSION.WRITE) and form.validate_on_submit():
@@ -31,18 +33,20 @@ def index():
 def for_admins_only():
     return 'For adminstretors!'
 
+
 @main.route('/moderator')
 @login_required
 @permission_required(PERMISSION.MODERATE)
 def for_moderators_only():
     return 'For comment moderators!'
 
+
 @main.route('/user/<username>')
-@login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.timestamp.desc()).all()
-    return render_template('user.html',user=user, posts=posts)
+    return render_template('user.html', user=user, posts=posts)
+
 
 @main.route('/edit-profile',methods=['GET','POST'])
 @login_required
@@ -186,7 +190,6 @@ def webmining():
 
 @main.route('/boolsearch', methods = ['POST', 'GET'])
 def boolsearch():
-    from ..extends.invert import InvertedFile
     InvertedFile.BuildDocumentIndex()
     InvertedFile.BuildWordIndex()
     #建立文章索引和单词索引
