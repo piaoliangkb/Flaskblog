@@ -22,9 +22,7 @@
     {% if not queryword %}
         <h1>SearchResult</h1>
     {% else %}
-        <h1>SearchResultFor:
-            <h3>{% for item in queryword %}{{ item }} {% endfor %}</h3>
-        </h1>
+        <h1>SearchResultFor:</h1> <h3>{% for item in queryword %}{{ item }} {% endfor %}</h3>
     {% endif %}
 
     {% if not isfound %}
