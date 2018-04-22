@@ -1,5 +1,6 @@
 from config import Config
 import os
+from collections import OrderedDict
 
 basedir = Config.BOOLEANSEARCH_PATH
 
@@ -25,7 +26,8 @@ class MiniSearchEngine():
 
     @staticmethod
     def GenerateResultDict(occurset):
-        queryresult = {}
+        # queryresult = {}
+        queryresult = OrderedDict()
         with open(basedir + "/documentindex.txt") as file:
             for line in file.readlines():
                 for i in occurset:
@@ -41,4 +43,5 @@ class MiniSearchEngine():
                         occurset.remove(i)
                         # 移除occurset中对应的值
                         break
+        print(queryresult.keys())
         return queryresult

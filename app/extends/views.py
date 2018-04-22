@@ -5,7 +5,15 @@ from .invert import InvertedFile
 from config import Config
 from . import extends
 import os
+from .word2vec import WordVector
+from .VectorSpaceSearch import VectorSpaceSearch
+from collections import OrderedDict
 
+#########################################################
+#
+# MiniSearchEngine
+#
+#########################################################
 @extends.route('/webmining', methods=['POST', 'GET'])
 def webmining():
     from ..extends.invert import InvertedFile
@@ -35,6 +43,12 @@ def webmining():
     return render_template('webmining.html', content=content, result=queryresult, isfound=isfound)
 
 
+
+#########################################################
+#
+# VectorModelSearch
+#
+#########################################################
 @extends.route('/boolsearch', methods=['POST', 'GET'])
 def boolsearch():
     InvertedFile.BuildDocumentIndex()
@@ -57,7 +71,8 @@ def boolsearch():
 
     query = request.args.get('query', None)
     # 查询参数的获取
-    queryresult = {}
+    # queryresult = {}
+    queryresult = OrderedDict()
     # 查询结果字典
     isfound = True
     # 标记是否查询到结果
@@ -69,12 +84,68 @@ def boolsearch():
             if occurset:
                 queryresult = MiniSearchEngine.GenerateResultDict(occurset)
         else:
-            result = BooleanSearch.searchWithBinaryTree(BooleanSearch.constructQueryTree(query))
-            queryresult = MiniSearchEngine.GenerateResultDict(result)
+            vss = VectorSpaceSearch()
+            occurset = vss.Search(query)
+            occurset.reverse()
+            # print(occurset)
+            queryresult = MiniSearchEngine.GenerateResultDict(occurset)
 
     return render_template('boolsearch.html', content=content, result=queryresult, isfound=isfound,
                                    queryword=words)
 
+
+
+# #########################################################
+# #
+# # 使用查询树和递归进行的boolSearch，and优先级最高，将直接连接起来的所有单词之间加上一个or
+# #
+# #########################################################
+# @extends.route('/boolsearch', methods=['POST', 'GET'])
+# def boolsearch():
+#     InvertedFile.BuildDocumentIndex()
+#     InvertedFile.BuildWordIndex()
+#     # 建立文章索引和单词索引
+#     basedir = Config.BOOLEANSEARCH_PATH
+#     allfilename = []
+#     # 文章路径list
+#     with open(basedir + "/documentindex.txt") as file:
+#         for content in file.readlines():
+#             filepath = content.split('\t')[1].replace('\n', '')
+#             allfilename.append(filepath)
+#     content = {}
+#     # 文章内容list，进入界面时展示文章内容
+#     for path in allfilename:
+#         with open(path) as file:
+#             filename = os.path.split(path)[1]
+#             # 分割路径和文件名
+#             content[filename] = file.read()
+#
+#     query = request.args.get('query', None)
+#     # 查询参数的获取
+#     queryresult = {}
+#     # 查询结果字典
+#     isfound = True
+#     # 标记是否查询到结果
+#     words = []
+#     if query:
+#         words = query.split()
+#         if len(words) == 1:
+#             occurset, isfound = MiniSearchEngine.SearchSingleKeyword(words[0], isfound)
+#             if occurset:
+#                 queryresult = MiniSearchEngine.GenerateResultDict(occurset)
+#         else:
+#             result = BooleanSearch.searchWithBinaryTree(BooleanSearch.constructQueryTree(query))
+#             queryresult = MiniSearchEngine.GenerateResultDict(result)
+#
+#     return render_template('boolsearch.html', content=content, result=queryresult, isfound=isfound,
+#                                    queryword=words)
+
+
+#########################################################
+#
+# 原有版本的boolsearch，未考虑and和or优先级的状况，直接遍历数组实现查找
+#
+#########################################################
 # @extends.route('/boolsearch', methods=['POST', 'GET'])
 # def boolsearch():
 #     InvertedFile.BuildDocumentIndex()
