@@ -7,7 +7,8 @@
 - 个人信息修改
 - 博客信息发布
 - 博客评论 
-- 文章列表页
+- 文章列表页  
+
 此外还有数据挖掘作业的两个可视化操作界面：
 - MiniSearchEngine
 - VectorSpaceSearch
