@@ -86,12 +86,16 @@ def boolsearch():
         else:
             vss = VectorSpaceSearch()
             occurset = vss.Search(query)
-            occurset.reverse()
-            # print(occurset)
+            # occurset.reverse()
+            print(occurset)
             queryresult = MiniSearchEngine.GenerateResultDict(occurset)
 
     return render_template('boolsearch.html', content=content, result=queryresult, isfound=isfound,
                                    queryword=words)
+
+@extends.route('/douban-dataanalysis')
+def douban():
+    return render_template('anewStart (3).html')
 
 
 
