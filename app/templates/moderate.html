@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}MyBlog - Moderate Comments{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Comment Moderaton</h1>
+</div>
+{% set moderate = True %}
+{# with this flag of moderate=True, admin can see the comment whether it is be disabled or not#}
+{% include "_comments.html" %}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.moderate') }}
+</div>
+{% endif %}
+{% endblock %}

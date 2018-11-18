@@ -4,7 +4,6 @@
 {{ super() }}
 {{ moment.include_moment() }}
 {% endblock %}
-<!--在基模板的scripts块中引入moment库-->
 
 {% block title %}MyBlog{% endblock %}
 
@@ -34,6 +33,9 @@ type="image/x-icon">
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('main.user', username=current_user.username) }}">
                     Profile</a></li>
+                {% endif %}
+                {% if current_user.can(Permission.MODERATE) %}
+                <li><a href="{{ url_for('main.moderate') }}">Moderate Comments</a></li>
                 {% endif %}
                 <li><a href="{{ url_for('main.post_list') }}">Posts</a></li>
                 <li><a href="{{ url_for('extends.webmining') }}">MinisearhEngine</a></li>

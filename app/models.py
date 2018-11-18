@@ -7,6 +7,7 @@ import hashlib
 from markdown import markdown
 import bleach
 
+
 class Comment(db.Model):
     __tablename__ = 'comments'
 
@@ -24,17 +25,25 @@ class Comment(db.Model):
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'), tags=allowed_tags, strip=True)
         )
+
+    def __repr__(self):
+        return '<author_id:{}, id:{}, body:{}, timestamp:{}, postid:{}>'.format(self.author_id,
+                                                                                self.id, self.body, self.timestamp,
+                                                                                self.post_id)
+
+
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
+
 
 class Post(db.Model):
     __tablename__ = 'posts'
 
     id = db.Column(db.Integer, primary_key=True)
-    title  = db.Column(db.String, default='this blog')
+    title = db.Column(db.String, default='this blog')
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    body_html = db.Column(db.Text)#保存转换后markdown文章的html代码
+    body_html = db.Column(db.Text)  # 保存转换后markdown文章的html代码
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
     def __repr__(self):
@@ -44,7 +53,7 @@ class Post(db.Model):
     def on_changed_body(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'h4','h5','p','img']
+                        'h1', 'h2', 'h3', 'h4', 'h5', 'p', 'img']
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
@@ -57,37 +66,41 @@ class Post(db.Model):
         seed()
         user_count = User.query.count()
         for i in range(count):
-            u = User.query.offset(randint(0, user_count-1)).first()
+            u = User.query.offset(randint(0, user_count - 1)).first()
             p = Post(body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
                      timestamp=forgery_py.date.date(True),
                      author=u)
         db.session.add(p)
         db.session.commit()
 
+
 db.event.listen(Post.body, 'set', Post.on_changed_body)
+
 
 class PERMISSION:
     FOLLOW = 1
     COMMENT = 2
     WRITE = 4
-    MODERATE = 8#FIND THE COMMENTS INAPPROPRIIATE中等的
+    MODERATE = 8  # FIND THE COMMENTS INAPPROPRIIATE中等的
     ADMIN = 16
+
 
 class Role(db.Model):
     __tablename__ = 'roles'
 
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(64), unique = True)
-    default = db.Column(db.Boolean, default = False, index = True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
-    users = db.relationship('User', backref = 'role', lazy = 'dynamic')
-    def __init__(self,**kwargs):
-        super(Role,self).__init__(**kwargs)
+    users = db.relationship('User', backref='role', lazy='dynamic')
+
+    def __init__(self, **kwargs):
+        super(Role, self).__init__(**kwargs)
         if self.permissions is None:
-            self.permissions=0
+            self.permissions = 0
 
     @staticmethod
-    #静态方法不需要实例化，直接使用类名+方法即可直接调用
+    # 静态方法不需要实例化，直接使用类名+方法即可直接调用
     def insert_roles():
         roles = {
             'User': [PERMISSION.FOLLOW, PERMISSION.COMMENT],
@@ -95,30 +108,30 @@ class Role(db.Model):
             'Adminstrator': [PERMISSION.FOLLOW, PERMISSION.COMMENT, PERMISSION.WRITE, PERMISSION.MODERATE,
                              PERMISSION.ADMIN],
         }
-        default_role='User'
+        default_role = 'User'
         for r in roles:
             role = Role.query.filter_by(name=r).first()
-            #查找Role表种是否有对应的用户类型
+            # 查找Role表种是否有对应的用户类型
             if role is None:
                 role = Role(name=r)
-            #如果Role表种没有对应的用户类型，则将新的用户类型加入到Role表中
+            # 如果Role表种没有对应的用户类型，则将新的用户类型加入到Role表中
             role.reset_permissions()
             for perm in roles[r]:
                 role.add_permission(perm)
-            role.default = (role.name==default_role)
+            role.default = (role.name == default_role)
             db.session.add(role)
         db.session.commit()
 
-    def add_permission(self,perm):
+    def add_permission(self, perm):
         if not self.has_permission(perm):
             self.permissions += perm
 
-    def remove_permission(self,perm):
+    def remove_permission(self, perm):
         if self.has_permission(perm):
             self.permissions -= perm
 
     def reset_permissions(self):
-        self.permissions=0
+        self.permissions = 0
 
     def has_permission(self, perm):
         return self.permissions & perm == perm
@@ -135,20 +148,20 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     email = db.Column(db.String(64), unique=True, index=True)
-    posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
     avatar_hash = db.Column(db.String(32))
-    #展示信息
-    name = db.Column(db.String(64))#real name
+    # 展示信息
+    name = db.Column(db.String(64))  # real name
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
-    #添加用户头像
+    # 添加用户头像
     avatar = db.Column(db.String(128), default=None)
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
-    def __init__(self,**kwargs):
-        super(User,self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
         if self.role is None:
             if self.email == current_app.config['FLASKY_ADMIN']:
                 self.role = Role.query.filter_by(permissions=0xff).first()
@@ -205,15 +218,18 @@ class User(UserMixin, db.Model):
     @password.setter
     def password(self, password):
         self.password_hash = generate_password_hash(password)
-    #把一个setter方法变成属性赋值。可以通过User.password =进行赋值，同时，调用@password.setter
-    #def password(self, password):函数，对self.password_hash赋值。
+
+    # 把一个setter方法变成属性赋值。可以通过User.password =进行赋值，同时，调用@password.setter
+    # def password(self, password):函数，对self.password_hash赋值。
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return '<Username: %r, Email: %r, Role_id: %d>' % (self.username, self.email, self.role_id)
-#一个python类代表一个数据库模型，类中的属性代表数据库表中的列
+
+
+# 一个python类代表一个数据库模型，类中的属性代表数据库表中的列
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
@@ -222,10 +238,13 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
+
 login_manager.anonymous_user = AnonymousUser
 
 from . import login_manager
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-#加载用户的回调函数
+# 加载用户的回调函数
