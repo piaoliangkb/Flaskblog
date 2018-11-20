@@ -38,6 +38,9 @@ def create_app(config_name):
     from .extends import extends as extends_blueprint
     app.register_blueprint(extends_blueprint, url_prefix='/extends')
 
+    from .api import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api/v1')
+
     app.config['TEMPLATES_AUTO_RELOAD'] = True
 
     return app
