@@ -219,9 +219,6 @@ class User(UserMixin, db.Model):
     def password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    # 把一个setter方法变成属性赋值。可以通过User.password =进行赋值，同时，调用@password.setter
-    # def password(self, password):函数，对self.password_hash赋值。
-
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -243,8 +240,8 @@ login_manager.anonymous_user = AnonymousUser
 
 from . import login_manager
 
-
+# 加载用户的回调函数
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-# 加载用户的回调函数
+
