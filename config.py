@@ -7,7 +7,7 @@ class Config:
     FLASKY_ADMIN = 'admin'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FLASKY_COMMENTS_PER_PAGE = 5
-    FLASKY_POSTS_PER_AGE = 1
+    FLASKY_POSTS_PER_AGE = 10
     POSTLISTS_FOR_POSTS_PER_PAGE = 10
     BOOLEANSEARCH_PATH = os.path.join(basedir, 'app/static/documents/BooleanSearch')
 

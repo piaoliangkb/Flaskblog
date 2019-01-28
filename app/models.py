@@ -81,7 +81,7 @@ class PERMISSION:
     FOLLOW = 1
     COMMENT = 2
     WRITE = 4
-    MODERATE = 8  # FIND THE COMMENTS INAPPROPRIIATE中等的
+    MODERATE = 8
     ADMIN = 16
 
 
@@ -99,8 +99,8 @@ class Role(db.Model):
         if self.permissions is None:
             self.permissions = 0
 
-    @staticmethod
     # 静态方法不需要实例化，直接使用类名+方法即可直接调用
+    @staticmethod
     def insert_roles():
         roles = {
             'User': [PERMISSION.FOLLOW, PERMISSION.COMMENT],
