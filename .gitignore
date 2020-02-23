@@ -103,3 +103,6 @@ venv1/
 
 # Database
 data-dev.sqlite
+
+# idea
+.idea
